@@ -5,8 +5,10 @@ I was in the need of some tutorial like animated touch view, so I made one (real
 
 ## How do I FGTouchIndicator?
 Copy over the two files and `#import` them. 
-Then you may use the force to
-    FGTouchIndicator *touch = [FGTouchIndicator touchIndicatorAnimatedFromPoint:CGPointMake(50, 50) toPoint:CGPointMake(300, 300) withDuration:2];
+Then you may use the force to  
+
+    FGTouchIndicator *touch = [FGTouchIndicator touchIndicatorAnimatedFromPoint:CGPointMake(50, 50) 
+    toPoint:CGPointMake(300, 300) withDuration:2];
     [self.view addSubview:touch];
 
 So that's that.
