@@ -10,6 +10,7 @@
 
 @implementation FGTouchIndicator
 
+#pragma mark defalut Tutorial
 - (id)initWithFromPoint:(CGPoint)start toPoint:(CGPoint)end duration:(CGFloat)time {
     
     self = [super init];
@@ -104,6 +105,82 @@
     }
 }
 
+
+#pragma mark Randomized Tutorial
+- (id)initWithFromValue:(CGFloat)start toValue:(CGFloat)end horizontal:(BOOL)horizontal duration:(CGFloat)time {
+    
+    self = [super init];
+    if (self) {
+        
+        NSTimer *timer = [NSTimer timerWithTimeInterval:time target:self selector:@selector(update) userInfo:nil repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+        
+        self.frame = CGRectMake(110, 568, 100, 100);
+        self.backgroundColor = [UIColor colorWithWhite:1 alpha:.8];
+        self.layer.masksToBounds = YES;
+        self.layer.cornerRadius = self.frame.size.width/2;
+        self.alpha = 0;
+        
+        _startValue = start;
+        _endValue = end;
+        _duration = time;
+        _horizontal = horizontal;
+        _animating = NO;
+        
+    }
+    return self;
+    
+}
+
++ (FGTouchIndicator *)touchIndicatorAnimatedFromValue:(CGFloat)start toValue:(CGFloat)end horizontal:(BOOL)horizontal withDuration:(CGFloat)time {
+    
+    return [[FGTouchIndicator alloc] initWithFromValue:start toValue:end horizontal:horizontal duration:time];
+    
+}
+
+- (void)update {
+    
+    int randomX = arc4random() % 320;
+    int randomY = arc4random() % ((IS_4INCH) ? 568 : 460);
+    
+    _startPoint = CGPointMake((_horizontal) ? _startValue : randomX
+                              , (_horizontal) ? randomY : _startValue);
+    _endPoint = CGPointMake((_horizontal) ? _endValue : randomX
+                              , (_horizontal) ? randomY : _endValue);
+    
+    self.center = _startPoint;
+    
+    [UIView animateKeyframesWithDuration:_duration delay:0 options:UIViewKeyframeAnimationOptionAllowUserInteraction animations:^{
+        
+        [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.3 animations:^{
+            
+            self.alpha = 1;
+            self.center = [self pointWithPercentage:.3];
+            self.transform = CGAffineTransformMakeScale(.5, .5);
+            
+        }];
+        
+        [UIView addKeyframeWithRelativeStartTime:.3 relativeDuration:.3 animations:^{
+            
+            self.center = [self pointWithPercentage:.7];
+            
+        }];
+        
+        [UIView addKeyframeWithRelativeStartTime:.6 relativeDuration:.3 animations:^{
+            
+            self.alpha = 0;
+            self.center = [self pointWithPercentage:1];
+            self.transform = CGAffineTransformIdentity;
+            
+        }];
+        
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+}
+
+#pragma mark Helper functions
 - (CGPoint)pointWithPercentage:(float)perOne {
     
     return CGPointMake(_startPoint.x + (_endPoint.x-_startPoint.x)*perOne, _startPoint.y + (_endPoint.y-_startPoint.y)*perOne);
